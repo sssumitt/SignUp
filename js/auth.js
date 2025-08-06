@@ -6,7 +6,6 @@ import {
   csrfTokenRef
 } from './fetchUtils.js';
 
-const url = 'http://localhost:5000'
 
 async function register() {
   const u = document.getElementById('username').value;
@@ -21,7 +20,7 @@ async function register() {
   }
  ;
   try {
-    const res = await fetch(`${url}/auth/register`, {
+    const res = await fetch(`${process.env.url}/auth/register`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -41,7 +40,7 @@ async function login() {
   const u = document.getElementById('username').value;
   const p = document.getElementById('password').value;
   try {
-    const res = await fetch(`${url}/auth/login`, {
+    const res = await fetch(`${process.env.url}/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -68,7 +67,7 @@ async function login() {
 
 async function logout() {
   try {
-    const res = await fetch(`${url}/auth/logout`, {
+    const res = await fetch(`${process.env.url}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'X-CSRF-Token': csrfTokenRef.value }

@@ -1,10 +1,10 @@
-const url = 'http://localhost:5000';
+
 
 export const csrfTokenRef = { value: '' };
 
 export async function getCsrfToken() {
   try {
-    const res = await fetch(`${url}/auth/csrf-token`, { credentials: 'include' });
+    const res = await fetch(`${process.env.url}/auth/csrf-token`, { credentials: 'include' });
     if (!res.ok) throw new Error(`Status ${res.status}`);
     const { csrfToken } = await res.json();
     csrfTokenRef.value = csrfToken;
@@ -20,11 +20,11 @@ export async function fetchWithAutoRefresh(fetchUrl, opts = {}) {
     opts.headers = { ...opts.headers, 'X-CSRF-Token': csrfTokenRef.value };
   }
 
-  let res = await fetch(`${url}${fetchUrl}`, opts);
+  let res = await fetch(`${process.env.url}${fetchUrl}`, opts);
 
   if (res.status === 401 && fetchUrl !== '/auth/refresh') {
     // attempt refresh
-    const r = await fetch(`${url}/auth/refresh`, {
+    const r = await fetch(`${process.env.url}/auth/refresh`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'X-CSRF-Token': csrfTokenRef.value }
@@ -33,9 +33,9 @@ export async function fetchWithAutoRefresh(fetchUrl, opts = {}) {
     if (!r.ok) throw new Error('Refresh failed');
     const { csrfToken } = await r.json();
     csrfTokenRef.value = csrfToken || csrfTokenRef.value;
-    
 
-    res = await fetch(`${url}${fetchUrl}`, opts); // retry original request
+
+    res = await fetch(`${process.env.url}${fetchUrl}`, opts); // retry original request
   }
 
   return res;
